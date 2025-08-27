@@ -1,0 +1,33 @@
+{
+    "id": "20617F23",
+    "path": "~/Desktop/LMU/Semester 3/Introduction to Statistical Software/exercise/blatt05/blatt05.Rmd",
+    "project_path": "blatt05.Rmd",
+    "type": "r_markdown",
+    "hash": "485042002",
+    "contents": "",
+    "dirty": false,
+    "created": 1737393183031.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "437,0",
+        "scrollLine": "0",
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "110:290.9090881347656",
+        "last_setup_crc32": ""
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1738846653,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1738846653874,
+    "read_only": false,
+    "read_only_alternatives": []
+}

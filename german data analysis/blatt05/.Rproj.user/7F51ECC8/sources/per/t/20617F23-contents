@@ -1,0 +1,440 @@
+---
+title: "Blatt05"
+author: "Seyed Ramtin Hosseini (12781949)"
+date: "2025-01-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 
+
+## Aufgabe 1
+
+Zunächst stellen wir sicher, dass die benötigten Pakete installiert sind und dann laden wir den `tidyverse`, der uns bei der Datenanalyse hilft.
+
+```{r}
+#install.packages("tidyverse")
+```
+
+Laden der notwendigen Bibliotheken
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Laden des Datensatzes
+
+```{r}
+dataset_state <- as.data.frame(state.x77)
+```
+
+### a) Berechnung der Korrelationskoeffizienten
+
+In dieser Aufgabe berechnen wir die Korrelation zwischen zwei Variablenpaaren im Datensatz `state.x77` und interpretieren die Ergebnisse.
+
+**1. Korrelation zwischen Einkommen (Income) und dem Anteil der High School Absolventen (HS Grad):**
+
+Um die Korrelation zwischen diesen beiden Variablen zu berechnen, verwenden wir die `cor()`-Funktion:
+
+```{r}
+cor(dataset_state$Income, dataset_state$`HS Grad`)
+```
+
+Der Korrelationskoeffizient beträgt **0.6199**. Dies bedeutet, dass es eine **moderat positive Korrelation** zwischen dem Einkommen und dem Anteil der High School Absolventen gibt. Ein höherer Anteil an High School Absolventen scheint mit einem höheren Einkommen in den US-Bundesstaaten zu korrelieren.
+
+**Interpretation:**
+
+-   **Statistisch**: Der positive Wert nahe bei 1 zeigt eine starke positive Beziehung zwischen den beiden Variablen.
+
+-   **Inhaltlich**: Es ist zu erwarten, dass eine höhere Bildungsbeteiligung (mehr High School Absolventen) zu einer besseren wirtschaftlichen Situation (höherem Einkommen) führt. Dies könnte durch die höhere Qualifikation der Arbeitskräfte und bessere berufliche Perspektiven bedingt sein.
+
+**2) Korrelation zwischen Analphabetismus (Illiteracy) und Morden (Murder):**
+
+Nun berechnen wir die Korrelation zwischen der Analphabetenrate und der Mordrate:
+
+```{r}
+cor(dataset_state$Illiteracy, dataset_state$Murder)
+```
+
+Der Korrelationskoeffizient beträgt **0.7030**, was ebenfalls eine **positive Korrelation** anzeigt. Dies bedeutet, dass in den US-Bundesstaaten mit höherer Analphabetenrate auch tendenziell mehr Morde vorkommen.
+
+**Interpretation:**
+
+-   **Statistisch**: Auch hier zeigt der positive Wert, dass die beiden Variablen eine moderate bis starke positive Beziehung haben.
+
+-   **Inhaltlich**: Eine mögliche Erklärung könnte sein, dass ein höherer Anteil an Analphabeten mit geringeren Bildungschancen und schlechteren wirtschaftlichen Perspektiven zusammenhängt, was wiederum zu mehr Kriminalität führt.
+
+**Methode für die Berechnung der Korrelation:**
+
+-   Der Pearson-Korrelationskoeffizient misst die lineare Korrelation zwischen den Variablen. Er ist empfindlich gegenüber Ausreißern und setzt voraus, dass die Daten kontinuierlich und annähernd normalverteilt sind.
+
+### b) Lineares Modell
+
+Für die Erstellung eines linearen Modells wählen wir das Einkommen (`Income`) als abhängige Variable und die verbleibenden Variablen als unabhängige Variablen.
+
+#### Formulierung des linearen Modells:
+
+```{r}
+
+# Abhängige Varialbe: Income
+# Unabhängige Variablen: Population, Life Exp, Illiteracy, Murder, HS Grad, Frost, Area
+
+formula <- Income ~  Population + 
+                     Illiteracy + 
+                     `Life Exp` + 
+                     Murder     + 
+                     `HS Grad`  + 
+                     Frost      + 
+                     Area
+
+linearmodel_income <-  lm(formula, data = dataset_state)
+
+summary(linearmodel_income)
+```
+
+Ergebnisse des Modells:
+
+```{r}
+coef(linearmodel_income)
+```
+
+**Interpretation der Regressionskoeffizienten:**
+
+-   **Mordrate (Murder)**: Der negative Regressionskoeffizient für die Mordrate zeigt, dass eine höhere Mordrate mit einem **geringeren Einkommen** assoziiert ist. Dies könnte darauf hindeuten, dass unsichere Städte mit höheren Mordraten tendenziell niedrigere Einkommen aufweisen.
+
+-   **Analphabetismus (Illiteracy)**: Der negative Regressionskoeffizient für die Analphabetenrate deutet darauf hin, dass eine höhere Analphabetenrate mit **niedrigeren Einkommen** verbunden ist. Geringe Bildung und damit geringere berufliche Qualifikationen könnten zu niedrigeren Einkommen führen.
+
+-   **High School-Abschlussrate (HS Grad)**: Der positive Koeffizient für den Anteil der High School-Absolventen weist darauf hin, dass mehr Absolventen mit einem **höheren Einkommen** korrelieren. Dies bestätigt die Theorie, dass Bildung ein wichtiger Faktor für das Einkommensniveau ist.
+
+-   **Population**: Eine höhere Bevölkerungszahl ist ebenfalls positiv mit dem Einkommen korreliert, was darauf hindeutet, dass größere Staaten möglicherweise mehr wirtschaftliche Möglichkeiten und damit höhere Durchschnittseinkommen bieten.
+
+    -   **Wert**: 0.03999
+
+    -   **p-Wert**: 0.0325 (signifikant auf dem 5%-Niveau)
+
+    -   **Interpretation**: Eine Erhöhung der Bevölkerungszahl um 1 Million führt zu einem **Anstieg des Einkommens um 0.04 Einheiten**. Es gibt eine positive Korrelation zwischen der Bevölkerungszahl und dem Einkommen. Dies deutet darauf hin, dass Staaten mit höherer Bevölkerung tendenziell höhere Einkommen haben, möglicherweise aufgrund von Skaleneffekten und einer größeren Arbeitskraft.
+
+**Inhaltliche Interpretation der Koeffizienten:**
+
+-   **Mordrate** und **Analphabetismus** haben einen negativen Einfluss auf das Einkommen, was darauf hindeutet, dass unsichere und schlecht gebildete Umgebungen das wirtschaftliche Potenzial verringern.
+
+-   **High School-Abschlussrate** und **Bevölkerung** haben einen positiven Einfluss, was zeigt, dass eine gut ausgebildete Bevölkerung und größere Bevölkerungsdichten tendenziell höhere Einkommen begünstigen.
+
+## Aufgabe 2
+
+### a) Funktion zur Berechnung des Bruttoinlandsprodukts pro Kopf (`gdp_percap`)
+
+Die Funktion `gdp_percap()` berechnet das Bruttoinlandsprodukt pro Kopf (BIP pro Kopf) eines Landes basierend auf der Gesamtbevölkerung und dem Bruttoinlandsprodukt.
+
+Erstellung der Funktion:
+
+```{r}
+
+# Funktion zur Berechnung des Bruttoinlandsprodukts pro Kopf
+gdp_percap <- function(population, gdp) {
+  gdp_per_cap = gdp / population  # BIP pro Kopf berechnen
+  return(gdp_per_cap)  # Rückgabe des BIP pro Kopf
+}
+
+```
+
+### Berechnung des BIP pro Kopf für Deutschland
+
+Für Deutschland im Jahr 2023:
+
+-   BIP von Deutschland: **4.525.703.900.000 USD** (Quelle: [World Bank](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD?locations=DE))
+
+-   Bevölkerung von Deutschland: **84.548.231** (Quelle: [Worldometers](https://www.worldometers.info/world-population/germany-population/))
+
+Die Berechnung erfolgt durch Aufrufen der Funktion:
+
+```{r}
+
+gdp_percap(population=84548231, gdp=4525703900000)
+```
+
+**Ergebnis der Berechnung:**\
+Das BIP pro Kopf in Deutschland beträgt **53,528.07 USD**.
+
+**Vergleich mit dem tatsächlichen Wert:**\
+Das Bruttoinlandsprodukt pro Kopf in Deutschland 2023 liegt bei **53,456.04 USD** (Quelle: [Statista](https://www.statista.com/statistics/295465/germany-gross-domestic-product-per-capita-in-current-prices/)).
+
+Die Berechnungen stimmen weitgehend überein, mit einer minimalen Differenz aufgrund von unterschiedlichen Quellen.
+
+### b) Funktion zur Zusammenfassung von Variablen (`variable_summary`)
+
+Die Funktion `variable_summary()` prüft, ob eine Variable numerisch ist, und führt entweder die `summary()`-Funktion für numerische Variablen oder die `table()`-Funktion für nicht-numerische Variablen aus.
+
+Erstellung der Funktion:
+
+```{r}
+variable_summary <- function(columnName) {
+  # Check if the column is numeric
+  if (is.numeric(columnName)) {
+    summary(columnName)  # Summary for numeric columns
+  } else {
+    table(columnName)  # Frequency table for non-numeric columns (e.g., factors)
+  }
+}
+```
+
+#### **Anwendung der Funktion auf den Iris-Datensatz**
+
+**Beispiel mit der nicht-numerischen Variable Species (Faktor)**
+
+```{r}
+
+# Test with the Species column (which is a factor in the iris dataset)
+variable_summary(iris$Species)
+```
+
+**Ergebnis:**\
+Die `table()`-Funktion gibt die Häufigkeit der verschiedenen Arten im Iris-Datensatz aus.
+
+**Beispiel mit der numerischen Variable `Sepal.Length`**
+
+```{r}
+# Test with a numeric column (e.g., Sepal.Length in the iris dataset)
+variable_summary(iris$Sepal.Length)
+```
+
+**Ergebnis:**\
+Die `summary()`-Funktion gibt eine statistische Zusammenfassung der numerischen Variablen
+
+## Aufgabe 3
+
+#### a) Datensatz laden und Struktur überprüfen
+
+Zuerst müssen wir den Datensatz `sotu.csv` laden und uns mit seinem Inhalt und seiner Struktur vertraut machen. Dazu verwenden wir die `read_csv()`-Funktion aus dem `tidyverse`.
+
+```{r message=FALSE, warning=FALSE}
+sotu_dataset <- read_csv("data/sotu.csv")
+```
+
+Datensatz kopieren (für Aufgabe 4c)
+
+```{r}
+sotu_dataset_copy <- sotu_dataset;
+```
+
+```{r}
+# Einen Blick auf die ersten Zeilen werfen
+head(sotu_dataset)
+```
+
+Dieser Datensatz enthält verschiedene Spalten, darunter die Namen der Präsidenten und die Texte ihrer "State of the Union"-Ansprachen.
+
+#### b) Erste und letzte Rede im Datensatz
+
+Um die erste und letzte Rede im Datensatz zu finden, können wir die Jahre und die Namen der Präsidenten extrahieren und uns dann die entsprechenden Zeilen anzeigen lassen.
+
+Erste:
+
+```{r}
+# Jahr und Name des Präsidenten für die erste und letzte Rede
+first_speech <- sotu_dataset[1, c("year", "name")]
+first_speech
+```
+
+Die erste Rede im Datensatz stammt aus dem Jahr **1790** und wurde von **George Washington** gehalten.
+
+Letzte:
+
+```{r}
+last_speech <- sotu_dataset[nrow(sotu_dataset), c("year", "name")]
+last_speech
+```
+
+Die letzte Rede im Datensatz stammt aus dem Jahr **2021** und wurde von **Joe Biden** gehalten.
+
+## Aufgabe 4
+
+#### a) Präsident, der "the state of the Union is not good" sagte
+
+Verwende die Funktion `str_detect()` von `stringr`, um nach dem Text "the state of the Union is not good" zu suchen und den entsprechenden Präsidenten zu ermitteln.
+
+```{r}
+presidentSpeech <- sotu_dataset %>% filter(str_detect(sotu_dataset$text, "the state of the Union is not good"))
+```
+
+```{r}
+presidentSpeech$name
+```
+
+```{r}
+print(paste("Der Satz 'the state of the Union is not good', wurde von Präsident", presidentSpeech$name, "im Jahre", presidentSpeech$year, "gesagt."))
+```
+
+#### b) Neue Spalten mit spezifischen Informationen hinzufügen
+
+1.  **`contains_women`**: Diese Spalte gibt an, ob das Wort "women" in der Rede vorkommt.
+
+    ```{r}
+    #contains women
+    sotu_dataset$contains_women <- ifelse(str_detect(sotu_dataset$text, "women"), TRUE, FALSE)
+    ```
+
+2.  **`characters_till_god`**: Diese Spalte zeigt an, wie viele Zeichen bis zum ersten Vorkommen des
+
+    Wortes "god" vergehen.
+
+    ```{r}
+    # Locate the position of "god" in each row of the text column
+    position <- str_locate(sotu_dataset$text, "god")
+
+    # Extract the start positions (first column of the matrix)
+    start_positions <- position[, 1]
+
+    # Add a new column with characters till "god"
+    # Subtract 1 to exclude the starting character of "god"
+    sotu_dataset$characters_till_god <- start_positions - 1
+
+
+    ```
+
+3.  **`count_freedom`**: Diese Spalte zählt, wie oft das Wort "freedom" in der Rede vorkommt.
+
+    ```{r}
+    sotu_dataset$count_freedom <- str_count(sotu_dataset$text, "freedom") 
+
+    ```
+
+4.  **`count_justice`**: Diese Spalte zählt, wie oft das Wort "justice" in der Rede vorkommt.
+
+    ```{r}
+    sotu_dataset$count_justice <- str_count(sotu_dataset$text, "justice") 
+
+    ```
+
+5.  **`speech_length`**: Diese Spalte zeigt die Anzahl der Zeichen in der Rede
+
+    ```{r}
+    sotu_dataset$speech_length <- str_length(sotu_dataset$text)
+
+    ```
+
+    ### **c) Funktion zur Berechnung der neuen Spalten erstellen**
+
+```{r}
+textAnalyser <- function(dataset) {
+  if ("text" %in% colnames(dataset)) {
+    #contains women
+    dataset$contains_women <- ifelse(str_detect(dataset$text, "women"), TRUE, FALSE)
+    
+    # Locate the position of "god" in each row of the text column
+    position <- str_locate(dataset$text, "god")
+    
+    # Extract the start positions (first column of the matrix)
+    start_positions <- position[, 1]
+    
+    # Add a new column with characters till "god"
+    # Subtract 1 to exclude the starting character of "god"
+    dataset$characters_till_god <- start_positions - 1
+    
+    #how many times does the word freedom exist in the text
+    
+    dataset$count_freedom <- str_count(dataset$text, "freedom") 
+    
+    dataset$count_justice <- str_count(dataset$text, "justice") 
+    
+    dataset$speech_length <- str_length(dataset$text)
+
+  }
+  return(dataset)
+}
+```
+
+Verwendung der Funktion
+
+```{r}
+sotu_dataset_copy <- textAnalyser(sotu_dataset_copy)
+```
+
+```{r}
+head(sotu_dataset_copy)
+```
+
+## Aufhabe 5
+
+### a) Korrelationsanalyse
+
+```{r}
+cor(sotu_dataset$count_justice, sotu_dataset$count_freedom)
+```
+
+**Ergebnis:** Korrelationskoeffizient: **-0.1233349**
+
+**Interpretation:**\
+Die Korrelation ist schwach negativ. Das bedeutet, dass ein leichter, aber nicht starker Trend besteht, dass die Häufigkeit von "freedom" sinkt, wenn die Häufigkeit von "justice" steigt (oder umgekehrt). Dieser Zusammenhang ist jedoch sehr gering und könnte auch zufällig sein.
+
+### b) Jitter-Plot: Beziehung zwischen "freedom" und "justice"
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+# Create the plot
+ggplot(sotu_dataset, aes(x = count_freedom, y = count_justice)) +
+  geom_jitter(color = "blue", alpha = 0.6, size = 2) +
+  labs(
+    x = "Anzahl des Wortes \"freedom\"",
+    y = "Anzahl des Wortes \"justice\"",
+    title = "Beziehung zwischen den Wörtern \"freedom\" und \"justice\"",
+    caption = "Datensatz der Rede"
+  ) +
+  theme_gray(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.caption = element_text(size = 10, face = "italic", hjust = 1)
+  )
+```
+
+### c) Umwandlung in das Long-Format
+
+```{r}
+
+# Umwandlung der Daten ins Long-Format
+long <- sotu_dataset %>%
+  pivot_longer(
+    cols = c(count_freedom, count_justice), 
+    names_to = "variable",  # Spaltennamen werden in "variable" gespeichert
+    values_to = "values"    # Werte werden in "values" gespeichert
+  )
+
+# Ausgabe des neuen Long-Datensatzes
+head(long)
+
+```
+
+### d) Line-Plot: Entwicklung über die Jahre
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+# Erstellung des Line-Plots
+ggplot(long, aes(x = year, y = values, color = variable, group = variable)) +
+  geom_line(size = 1.2) +  # Linien-Plot
+  labs(
+    title = "Häufigkeit der Wörter 'Freedom' und 'Justice' nach Jahr",
+    subtitle = "Analyse basierend auf den State of the Union Reden",
+    x = "Jahr", 
+    y = "Häufigkeit",
+    color = "Begriff"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 10, hjust = 0.5, margin = margin(b = 10)),
+    legend.position = "top",
+    legend.title = element_text(face = "bold"),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(size = 12),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_color_manual(
+    values = c("green", "red"),
+    labels = c("Freedom", "Justice")
+  )
+```

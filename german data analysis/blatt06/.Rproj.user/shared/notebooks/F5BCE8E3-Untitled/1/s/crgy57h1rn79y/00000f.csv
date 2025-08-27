@@ -1,0 +1,4 @@
+"0","weather <- read_csv(""data/weatherdata-2024.csv"")"
+"0",""
+"0","#install.packages(""janitor"")"
+"0","library(janitor)"

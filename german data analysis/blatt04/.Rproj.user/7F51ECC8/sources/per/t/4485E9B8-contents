@@ -1,0 +1,680 @@
+---
+title: "blatt04"
+author: "Seyed Ramtin Hosseini (12781949)"
+date: "2025-01-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Arbeitsblatt 04
+
+## Aufgabe 1
+
+In meinem Analyseprojekt beschäftige ich mich mit der Untersuchung von Erwerbssituation und Arbeitsmarkttrends in Deutschland sowie drei weiteren EU-Mitgliedsstaaten: Frankreich, Italien und Polen. Dabei verwende ich Daten aus den Jahren 2008 bis 2022, um zeitliche Entwicklungen und regionale Unterschiede zu beleuchten. Mein Fokus liegt auf der Analyse der Auswirkungen von Bildungsniveau, Alter und Geschlecht auf die Beschäftigungsquote und Arbeitslosigkeit, wobei folgende drei Forschungsfragen im Mittelpunkt stehen:
+
+a)  
+
+<!-- -->
+
+1.  **Bildungsniveau und Arbeitsmarktchancen:** Wie ist die Erwerbssituation in Deutschland im Hinblick auf das Bildungsniveau im Vergleich zu Frankreich, Italien und Polen? Haben Menschen mit höherer Bildung bessere Chancen auf dem Arbeitsmarkt, sowohl in Deutschland als auch in den anderen Ländern?
+
+2.  **Alter und Erwerbssituation:** Wie hat sich die Erwerbssituation älterer Menschen in Deutschland zwischen 2008 und 2022 verändert, und wie steht dies im Vergleich zu den anderen Ländern? Arbeiten heute mehr ältere Menschen als früher?
+
+3.  **Geschlechterunterschiede:** In welchem der untersuchten Länder ist der Unterschied in der Beschäftigungsquote zwischen Frauen und Männern am geringsten, und wie hat sich dieser entwickelt?
+
+<!-- -->
+
+b)  
+
+Die Entscheidung für diese Fragestellungen ergibt sich aus ihrer Relevanz für Gesellschaft, Politik und Wirtschaft. Die Arbeitsmarktsituation ist ein zentraler Indikator für die Lebensqualität und den sozialen Fortschritt in einer Gesellschaft. Der Vergleich verschiedener Altersgruppen, Geschlechter und Bildungsniveaus bietet wertvolle Einblicke, um bestehende Herausforderungen wie Ungleichheiten oder Altersdiskriminierung aufzuzeigen. Zielgruppen dieser Analyse sind daher politische Entscheidungsträger, Arbeitsmarktanalysten sowie alle, die sich für soziale Gerechtigkeit und wirtschaftliche Entwicklungen in der EU interessieren.
+
+c)  
+
+Ich habe mich dazu entschieden, mit einem neuen Datensatz zu arbeiten, da dieser detailliertere und umfassendere Informationen bietet, die eine tiefere und anspruchsvollere Analyse ermöglichen. Dies macht die Ergebnisse nicht nur relevanter, sondern eröffnet auch die Möglichkeit, differenzierte Erkenntnisse für die genannten Forschungsfragen zu gewinnen.
+
+## Aufgabe 2
+
+b)  
+
+Der "Current well-being"-Datensatz der OECD umfasst mehr als 80 Indikatoren, die auf dem OECD-Wohlbefindens-Dashboard basieren. Diese Indikatoren sind in 11 Dimensionen des aktuellen Wohlbefindens unterteilt, die materielle Bedingungen (z.B. Einkommen, Vermögen, Arbeit), Lebensqualitätsfaktoren (z.B. Gesundheit, Bildung, Umweltqualität), sowie soziale und zwischenmenschliche Faktoren (z.B. soziale Kontakte, Bürgerengagement) abdecken. Die Beobachtungseinheit in diesem Datensatz ist in der Regel das Land, wobei die Daten durch demografische Merkmale wie Geschlecht, Alter, Bildungsniveau und weitere relevante Faktoren differenziert werden. Die Erhebung der Daten erfolgt durch nationale statistische Institute und Organisationen in Zusammenarbeit mit der OECD, wobei moderne statistische Methoden zur Sammlung und Analyse der Informationen eingesetzt werden, um länderübergreifende Vergleiche und Analysen zu ermöglichen.
+
+Untersuchungseinheit: Land
+
+Quelle: [OECD (Current Well-being)](https://data-explorer.oecd.org/vis?lc=en&df%5Bds%5D=dsDisseminateFinalDMZ&df%5Bid%5D=DSD_HSL%40DF_HSL_CWB&df%5Bag%5D=OECD.WISE.WDP&dq=.11_2%2B11_1%2B9_3%2B9_2%2B8_2%2B8_1_DEP%2B7_2%2B7_1_DEP%2B6_2_DEP%2B6_2%2B5_3%2B5_1%2B4_3%2B4_1%2B3_2%2B3_1%2B2_7%2B2_2%2B2_1%2B1_3%2B1_2%2B1_1.._T._T._T.&lom=LASTNOBSERVATIONS&lo=1&pd=%2C&to%5BTIME_PERIOD%5D=false)
+
+Anzahl der Reihen: 89712
+
+Anzahl der Spalten: 30
+
+b)  
+
+### Data Wrangling
+
+In dieser Analyse wird der Datensatz aufbereitet, sodass er für die Forschungsfragen geeignet ist. Dabei folgen wir strukturierten Schritten, um den Datensatz zu bereinigen, relevante Informationen auszuwählen und in ein analysierbares Format zu bringen. Jeder Schritt wird klar erläutert, und unnötige Schritte werden vermieden.
+
+------------------------------------------------------------------------
+
+### Installieren und Laden der benötigten Pakete
+
+Das `tidyverse`-Paket wird verwendet, da es eine Sammlung von Werkzeugen für Datenmanipulation, Visualisierung und Analyse bietet.
+
+```{r message=FALSE, warning=FALSE}
+#install.packages("tidyverse")
+```
+
+Laden des tidyverse-Pakets
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Laden des Datensatzes Der Datensatz wird aus einer CSV-Datei geladen. Er enthält Informationen zu verschiedenen Ländern, Messungen, Geschlechtern und Bildungsniveaus.
+
+```{r message=FALSE, warning=FALSE}
+current_wellbeing <- read_csv("data/OECD.WISE.WDP,DSD_HSL@DF_HSL_CWB,+all.csv")
+```
+
+Datenüberblick: Struktur und Dimensionen Zunächst wird die Struktur des Datensatzes untersucht, um die Anzahl der Spalten und Reihen zu bestimmen.
+
+Anzahl der Spalten
+
+```{r}
+current_wellbeing %>% ncol()
+```
+
+Anzahl der Reihen
+
+```{r}
+current_wellbeing %>% nrow()
+```
+
+### Auswahl relevanter Variablen
+
+Für die Analyse werden nur die folgenden Spalten benötigt:
+
+-   `Reference area`: Land
+
+-   `Measure`: Messung (z. B. Beschäftigungsquote)
+
+-   `Age`: Altersgruppe
+
+-   `Sex`: Geschlecht
+
+-   `Education level`: Bildungsniveau
+
+-   `TIME_PERIOD`: Jahr
+
+-   `OBS_VALUE`: Beobachteter Wert
+
+```{r}
+current_wellbeing_selected <- current_wellbeing %>% select(`Reference area`,Measure,Age,Sex,`Education level`,TIME_PERIOD,OBS_VALUE)
+```
+
+### Filtern der relevanten Länder
+
+Es werden nur die Länder **Deutschland**, **Frankreich**, **Italien** und **Polen** für die Analyse berücksichtigt.
+
+```{r}
+current_wellbeing_filteredByCountry <- current_wellbeing_selected %>% filter(
+                                                                              `Reference area`=="Germany" | `Reference area`=="France" | `Reference area`=="Italy" | `Reference area`=="Poland"  
+)                                                                              
+```
+
+### Auswahl relevanter Messungen
+
+Für die Forschungsfragen sind nur die folgenden Messungen relevant:
+
+-   **Employment rate** (Beschäftigungsquote)
+
+-   **Long-term unemployment rate** (Langzeitarbeitslosenquote)
+
+```{r}
+current_well_being_filteredByMeasure <- current_wellbeing_filteredByCountry %>% filter(Measure=="Long-term unemployment rate" | Measure=="Employment rate")
+```
+
+### Filtern des Zeitraums
+
+Die Analyse beschränkt sich auf die Jahre **2008 bis 2022**. Alle anderen Zeitpunkte werden ausgeschlossen.
+
+```{r}
+current_well_being_filteredByYear <- current_well_being_filteredByMeasure %>% filter(TIME_PERIOD>2007 &TIME_PERIOD<2023)
+```
+
+### Umstrukturierung der Daten (Pivoting)
+
+Der Datensatz wird von einem langen Format in ein breites Format umgewandelt, sodass jede Messung (Beschäftigungsquote und Langzeitarbeitslosenquote) in einer eigenen Spalte dargestellt wird. Dies erleichtert die Analyse.
+
+```{r}
+current_well_being_wider <- current_well_being_filteredByYear %>% pivot_wider(names_from = Measure, values_from = OBS_VALUE)
+```
+
+### Umgang mit fehlenden Werten
+
+Fehlende Werte (`NA`) werden durch den Mittelwert der jeweiligen Spalte ersetzt, um eine vollständige Analyse zu ermöglichen.
+
+```{r}
+current_well_being_NoMissingValue <- current_well_being_wider %>% mutate(across(where(is.numeric), ~ ifelse(is.na(.), mean(., na.rm = TRUE), .)))
+```
+
+### Übersetzung der Variablennamen ins Deutsche
+
+Die Variablennamen werden ins Deutsche übersetzt, um die Verständlichkeit für die Zielgruppe zu erhöhen.
+
+```{r}
+current_well_being_germanVaribales <- current_well_being_NoMissingValue %>%
+  rename(
+    Referenzgebiet = `Reference area`,
+    Alter = Age,
+    Geschlecht = Sex,
+    Bildungsniveau = `Education level`,
+    Zeitraum = TIME_PERIOD,
+    Beschäftigungsquote = `Employment rate`,
+    Langzeitarbeitslosenquote = `Long-term unemployment rate`
+  )
+```
+
+### Übersetzung der Werte ins Deutsche
+
+Auch die Werte innerhalb der Variablen werden ins Deutsche übersetzt.
+
+```{r}
+current_well_being_german <- current_well_being_germanVaribales %>%  mutate(
+  Referenzgebiet = recode(Referenzgebiet,
+                      "Germany" = "Deutschland",
+                      "Italy" = "Italien",
+                      "France" = "Frankreich",
+                      "Poland" = "Polen"),
+           
+   Geschlecht= recode(Geschlecht,
+                      "Total" = "Gesamt",
+                      "Female" = "Weiblich",
+                      "Male" = "Männlich"),
+  
+  Bildungsniveau = recode(Bildungsniveau,
+                          "Total" = "Gesamt",
+                          "Primary education" = "Primärbildung",
+                          "Secondary education" = "Sekundärbildung",
+                          "Tertiary education" = "Tertiärbildung"),
+  Alter = recode(Alter,
+                 "Total" = "Gesamt",
+                 "Young" = "Jung",
+                 "Old" = "Alt",
+                 "Middle-aged" = "Mittelalter")
+)
+
+```
+
+### Finales Ergebnis
+
+Nach diesen Schritten ist der Datensatz vollständig bereinigt, übersetzt und in einem breiten Format, das sich für die Analyse eignet.
+
+```{r}
+current_well_being_clean <- current_well_being_german 
+head(current_well_being_clean, n=10)
+```
+
+Durch diesen Data-Wrangling-Prozess wurden die relevanten Variablen und Werte ausgewählt, der Datensatz bereinigt und fehlende Werte behandelt. Die Daten sind nun übersichtlich, gut strukturiert und bereit für die Beantwortung der Forschungsfragen. Unnötige Schritte, wie das Entfernen von weiteren Kategorien oder tiefere statistische Transformationen, waren nicht erforderlich, da die Daten bereits gut strukturiert vorlagen.
+
+## Aufgabe 3
+
+Plot 1
+
+```{r  message=FALSE, warning=FALSE}
+## Beschäftigungsquote
+current_well_being_german %>%
+  filter(Alter %in% "Gesamt") %>%
+  filter(Geschlecht %in% "Gesamt") %>%
+  filter(Bildungsniveau == "Gesamt") %>%
+  ggplot() +
+  aes(x = Zeitraum, y = Beschäftigungsquote, color = Referenzgebiet, group = Referenzgebiet) +
+  geom_line(size = 1.2) +  # Thick lines to emphasize trends
+  geom_point(size = 2) +  # Highlight data points
+  scale_color_manual(
+    values = c("Deutschland" = "#FFCC00", 
+               "Polen" = "#D32F2F", 
+               "Italien" = "#388E3C", 
+               "Frankreich" = "#1976D2")
+  ) +
+  labs(
+    x = "Jahr",
+    y = "Beschäftigungsquote",
+    title = "Beschäftigungsquote",
+    subtitle = "Vergleich der Beschäftigungsquote im Zeitraum 2008–2022",
+    caption = "Quelle: OECD Data Explore (Current Well-Being)",
+    color = "Land"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 14, hjust = 0.5),
+    plot.caption = element_text(size = 10, hjust = 0),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 10)
+  ) +  
+  # Add points at the maximum value of each line
+  geom_point(
+    data = current_well_being_german %>%
+      filter(Alter %in% "Gesamt") %>%
+      filter(Geschlecht %in% "Gesamt") %>%
+      filter(Bildungsniveau == "Gesamt") %>%
+      filter(Zeitraum >= 2008L & Zeitraum <= 2022L) %>%
+      group_by(Referenzgebiet) %>%
+      filter(Beschäftigungsquote == max(Beschäftigungsquote, na.rm = TRUE)) %>%
+      ungroup(),
+    aes(x = Zeitraum, y = Beschäftigungsquote),
+    size = 4, shape = 21, fill = "white", color = "black", stroke = 2  # Highlight max point
+  ) +
+  # Add labels for the maximum values (year and value)
+  geom_text(
+    data = current_well_being_german %>%
+      filter(Alter %in% "Gesamt") %>%
+      filter(Geschlecht %in% "Gesamt") %>%
+      filter(Bildungsniveau == "Gesamt") %>%
+      filter(Zeitraum >= 2008L & Zeitraum <= 2022L) %>%
+      group_by(Referenzgebiet) %>%
+      filter(Beschäftigungsquote == max(Beschäftigungsquote, na.rm = TRUE)) %>%
+      ungroup(),
+    aes(x = Zeitraum, y = Beschäftigungsquote, label = paste0(round(Beschäftigungsquote, 2), "%")),
+    size = 4, vjust = -0.5, hjust = 0.9
+  )
+```
+
+### **1. Plot: Beschäftigungsquote und Ländern (2008–2022)**
+
+**Beschreibung:**\
+Dieser Plot vergleicht die allgemeine Beschäftigungsquote in den Ländern Deutschland, Frankreich, Italien und Polen über den Zeitraum 2008 bis 2022. Die farbigen Linien stehen für die jeweiligen Länder:
+
+-   **Gelb (Deutschland):** Deutschland zeigt über die gesamte Zeitspanne die höchste Beschäftigungsquote, die von etwa 77 % im Jahr 2008 auf 81,95 % im Jahr 2022 ansteigt.
+
+-   **Blau (Frankreich):** Frankreich bleibt über den gesamten Zeitraum relativ stabil, mit einer Quote von etwa 70 % bis 76 %.
+
+-   **Rot (Polen):** Polen zeigt den stärksten Anstieg. Während die Quote 2008 bei knapp 65 % liegt, erreicht sie 2022 78,89 % und überholt Frankreich.
+
+-   **Grün (Italien):** Italien bleibt konstant das Schlusslicht, mit einer Quote, die sich im Bereich von 62 % bis 67,55 % bewegt.
+
+**Erkennbarer Trend:**
+
+-   In allen Ländern ist ein Anstieg der Beschäftigungsquote zu erkennen, wobei Polen den stärksten Zuwachs zeigt. Deutschland führt über die gesamte Zeitspanne und hat 2022 die höchste Quote.
+
+-   Italien weist die niedrigste Quote auf, trotz eines leichten Anstiegs in den letzten Jahren.
+
+Plot 2
+
+```{r}
+
+#Education and work 
+current_well_being_german %>%
+  filter(Alter %in% "Gesamt") %>%
+  filter(Geschlecht %in% "Gesamt") %>%
+  filter(!(Bildungsniveau %in% "Gesamt")) %>%
+  filter(Zeitraum >= 2008L & Zeitraum <= 2022L) %>%
+  ggplot() +
+  aes(x = Zeitraum, y = Beschäftigungsquote, color = Bildungsniveau, group = Bildungsniveau) +
+  geom_line(size = 1.2) +  # Thick lines to emphasize trends
+  geom_point(size = 2) +  # Highlight data points
+  scale_color_brewer(palette = "Set1") +  # Distinctive colors for Bildungsniveau
+  labs(
+    x = "Jahr",
+    y = "Beschäftigungsquote",
+    title = "Beschäftigungsquote nach Bildungsniveau",
+    subtitle = "Vergleich über Bildungsniveaus im Zeitraum 2008–2022",
+    caption = "Quelle: OECD Data Explore (Current Well-Being)",
+    color = "Bildungsniveau"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 14, hjust = 0.5),
+    plot.caption = element_text(size = 10, hjust = 0),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 10),
+    strip.text = element_text(size = 14, face = "bold")
+  ) +
+  facet_wrap(vars(Referenzgebiet), ncol = 2) +  # Separate plots for each country
+  scale_x_continuous(breaks = c(2008, 2012, 2016, 2020))
+
+```
+
+### **2. Plot: Beschäftigungsquote nach Bildungsniveau**
+
+**Beschreibung:**\
+Dieser Plot zeigt die Entwicklung der Beschäftigungsquote separat für die Länder Deutschland, Frankreich, Italien und Polen, unterteilt nach Bildungsniveau:
+
+-   **Rot (Primärbildung):** Menschen mit primärer Bildung haben in allen Ländern die niedrigste Beschäftigungsquote, wobei die Werte besonders in Italien und Polen unter 60 % bleiben.
+
+-   **Blau (Sekundärbildung):** Die Beschäftigungsquote von Menschen mit sekundärer Bildung liegt in allen Ländern zwischen den anderen beiden Gruppen. Deutschland und Frankreich weisen hier durchweg höhere Quoten auf als Italien und Polen.
+
+-   **Grün (Tertiärbildung):** Personen mit tertiärer Bildung haben in allen Ländern die höchste Beschäftigungsquote. Deutschland führt hierbei mit Quoten, die konstant über 85 % liegen. Frankreich folgt mit etwa 80 %, während Italien und Polen niedrigere Werte zwischen 70 % und 75 % aufweisen.
+
+**Erkennbarer Trend:**
+
+-   Höhere Bildung (tertiäre Bildung) korreliert in allen Ländern mit einer deutlich höheren Beschäftigungsquote.
+
+-   In Italien und Polen sind die Unterschiede zwischen Bildungsniveaus besonders stark ausgeprägt. Deutschland hat insgesamt die höchsten Quoten für alle Bildungsniveaus.
+
+Plot 3
+
+```{r}
+##Arbeitslosigkeit
+
+current_well_being_german %>%
+  filter(Alter %in% "Gesamt") %>%
+  filter(Geschlecht %in% "Gesamt") %>%
+  filter(Bildungsniveau %in% "Gesamt") %>%
+  filter(Zeitraum >= 2008L & Zeitraum <= 2022L) %>%
+  ggplot() +
+  aes(x = Zeitraum, y = Langzeitarbeitslosenquote, colour = Referenzgebiet) +
+  geom_line(size = 1.2) +  # Thick line for emphasis
+  scale_color_manual(
+    values = c("Deutschland" = "#FFCC00", 
+               "Polen" = "#D32F2F", 
+               "Italien" = "#388E3C", 
+               "Frankreich" = "#1976D2")
+  ) +  # Smooth color transition
+  labs(
+    x = "Jahr",  # x-axis label
+    y = "Langzeitarbeitslosenquote (%)",  # y-axis label
+    title = "Langzeitarbeitslosenquote (2008–2022)",  # Plot title
+    subtitle = "Entwicklung der Langzeitarbeitslosenquote nach Referenzgebiet",  # Subtitle
+    caption = "Quelle: OECD Data Explore (Current Well-Being)"  # Caption for source
+  ) +
+  theme_minimal(base_size = 14) +  # Minimal theme with larger base size
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),  # Title styling
+    plot.subtitle = element_text(size = 14, hjust = 0.5),  # Subtitle styling
+    plot.caption = element_text(size = 10, hjust = 0, color = "gray50"),  # Caption styling
+    axis.title.x = element_text(size = 14, face = "bold"),  # x-axis title styling
+    axis.title.y = element_text(size = 14, face = "bold"),  # y-axis title styling
+    axis.text = element_text(size = 12),  # Axis text styling
+    legend.title = element_text(size = 13),  # Legend title size
+    legend.text = element_text(size = 11),  # Legend text size
+    legend.position = "right",  # Legend position
+    panel.grid.major = element_line(color = "gray80"),  # Lighter grid lines for better visibility
+    panel.grid.minor = element_line(color = "gray90")  # Lighter minor grid lines
+  )
+```
+
+### **3. Plot: Langzeitarbeitslosenquote in Deutschland im Vergleich zu anderen Ländern (2008–2022)**
+
+**Beschreibung:**\
+Dieser Plot zeigt die Langzeitarbeitslosenquote (in %) für die Länder Deutschland, Frankreich, Italien und Polen im Zeitraum 2008 bis 2022:
+
+-   **Gelb (Deutschland):** Die Langzeitarbeitslosenquote in Deutschland sinkt von 4 % im Jahr 2008 kontinuierlich auf etwa 1,5 % im Jahr 2022.
+
+-   **Blau (Frankreich):** Frankreich zeigt ebenfalls einen leichten Rückgang, wobei die Werte von etwa 3,5 % auf 2,5 % sinken.
+
+-   **Rot (Polen):** Polen zeigt einen drastischen Rückgang. Die Quote beginnt bei etwa 3 % und fällt bis 2022 unter 1,5 %.
+
+-   **Grün (Italien):** Italien zeigt den gegenteiligen Trend. Die Langzeitarbeitslosenquote steigt bis 2015 auf etwa 8 % und sinkt danach leicht, bleibt aber 2022 mit rund 5 % am höchsten.
+
+**Erkennbarer Trend:**
+
+-   Deutschland und Polen zeigen eine deutliche Verbesserung, mit den niedrigsten Langzeitarbeitslosenquoten 2022.
+
+-   Italien weist die höchsten Quoten auf, mit einem signifikanten Anstieg bis 2015 und nur einem langsamen Rückgang seitdem.
+
+-   Frankreich bleibt relativ stabil und verzeichnet moderate Rückgänge.
+
+Die Plots zeigen deutliche Unterschiede zwischen den Ländern: Deutschland hat durchweg die stabilsten und besten Werte sowohl bei der Beschäftigungsquote als auch bei der Langzeitarbeitslosenquote. Höhere Bildung verbessert die Chancen auf dem Arbeitsmarkt in allen Ländern, wobei Italien und Polen besonders große Disparitäten zwischen Bildungsniveaus aufweisen.
+
+### **Bildungsniveau und Arbeitsmarktchancen: Vergleich zwischen Deutschland, Frankreich, Italien und Polen**
+
+**1. Vergleich der Erwerbsquoten nach Bildungsniveau:** Die zweite Grafik zeigt klar, dass Menschen mit einem höheren Bildungsniveau (tertiäre Bildung) in allen untersuchten Ländern die höchsten Beschäftigungsquoten haben. Dies bestätigt die Hypothese, dass höhere Bildung bessere Arbeitsmarktchancen bietet.
+
+-   **Deutschland:** Die Erwerbsquote für Personen mit tertiärer Bildung liegt kontinuierlich über 85 %, was im Vergleich zu anderen Ländern am höchsten ist.
+
+-   **Frankreich:** Auch hier liegt die Quote der tertiär Gebildeten bei etwa 80 %, während Menschen mit primärer Bildung lediglich knapp 60 % erreichen.
+
+-   **Italien und Polen:** Beide Länder zeigen ein deutlich niedrigeres Niveau. Polen liegt für tertiär Gebildete bei rund 75 %, während Italien unter 70 % bleibt. In beiden Ländern ist die Erwerbsquote für primär Gebildete unter 55 %.
+
+**Erkenntnis:** Menschen mit höherer Bildung profitieren in allen Ländern von deutlich besseren Arbeitsmarktchancen. Deutschland bietet dabei die besten Chancen für hoch Gebildete, während in Italien und Polen Bildung einen noch stärkeren Unterschied macht.
+
+------------------------------------------------------------------------
+
+**2. Zeitliche Entwicklung der Beschäftigungsquote:**\
+Die erste Grafik zeigt die generelle Entwicklung der Beschäftigungsquote von 2008 bis 2022 für alle vier Länder:
+
+-   **Deutschland** führt kontinuierlich und steigert die Beschäftigungsquote von etwa 77 % auf fast 82 %.
+
+-   **Polen** verzeichnet den stärksten Anstieg (rund 15 %), überholt Frankreich (76 %) und erreicht 2022 78 %.
+
+-   **Italien** bleibt konstant das Schlusslicht, zeigt aber seit 2020 einen positiven Trend.
+
+**Erkenntnis:** Die Beschäftigungsquoten entwickeln sich in Polen besonders dynamisch, während Deutschland weiterhin stabile Spitzenwerte hält.
+
+------------------------------------------------------------------------
+
+**3. Langzeitarbeitslosigkeit und Bildung:**\
+Die dritte Grafik zeigt die Langzeitarbeitslosigkeit. Besonders in Italien ist die Langzeitarbeitslosigkeit stark angestiegen (bis zu 8 %), während sie in Deutschland kontinuierlich zurückging und 2022 mit etwa 1,5 % die niedrigste ist.
+
+**Fazit:**\
+Höhere Bildung ist in allen Ländern der Schlüssel zu besseren Arbeitsmarktchancen und reduziert das Risiko von Langzeitarbeitslosigkeit. Deutschland bietet dabei die stabilste Erwerbssituation, während Italien und Polen stärkere soziale Disparitäten zeigen.
+
+Plot 4
+
+```{r}
+# age and work
+
+current_well_being_german %>%
+  filter(!(Alter %in% "Gesamt")) %>%
+  filter(Geschlecht %in% "Gesamt") %>%
+  filter(Bildungsniveau %in% "Gesamt") %>%
+  filter(Zeitraum >= 2008L & Zeitraum <= 2022L) %>%
+  ggplot() +
+  aes(x = Zeitraum, y = Beschäftigungsquote, colour = Referenzgebiet) +
+  geom_line(size = 1.2) +  # Emphasize lines with thicker width
+  scale_color_manual(
+    values = c("Deutschland" = "#FFCC00",  # Yellow for Germany
+               "Polen" = "#D32F2F",         # Red for Poland
+               "Italien" = "#388E3C",       # Green for Italy
+               "Frankreich" = "#1976D2")    # Blue for France
+  ) +  # Manual color scale for lines
+  labs(
+    x = "Jahr",  # x-axis label
+    y = "Beschäftigungsquote (%)",  # y-axis label
+    title = "Beschäftigungsquote nach Altersgruppen",  # Main title
+    subtitle = "Entwicklung der Beschäftigungsquote über Altersgruppen (2008 -2022)",  # Subtitle
+    caption = "Quelle: OECD Data Explore (Current Well-Being)"  # Data source caption
+  ) +
+  theme_minimal(base_size = 14) +  # Clean, minimalist theme
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),  # Title styling (centered, bold)
+    plot.subtitle = element_text(size = 14, hjust = 0.5),  # Subtitle styling (centered)
+    plot.caption = element_text(size = 10, hjust = 0, color = "gray50"),  # Caption styling (gray, left-aligned)
+    axis.title.x = element_text(size = 14, face = "bold"),  # x-axis title styling (bold)
+    axis.title.y = element_text(size = 14, face = "bold"),  # y-axis title styling (bold)
+    axis.text = element_text(size = 12),  # Axis text styling (readable size)
+    legend.title = element_text(size = 13),  # Legend title size
+    legend.text = element_text(size = 11),  # Legend text size
+    legend.position = "right",  # Legend positioning (on the right)
+    strip.text = element_text(size = 14, face = "bold"),  # Facet label styling (bold)
+    panel.grid.major = element_line(color = "gray80"),  # Major grid line color
+    panel.grid.minor = element_line(color = "gray90")  # Minor grid line color (lighter)
+  ) +
+   # Separate plots for each country
+  scale_x_continuous(breaks = c(2008, 2012, 2016, 2020))+
+  facet_wrap(vars(Alter), ncol = 3)  # Arrange facets by 'Alter' in 3 columns
+```
+
+Der Plot zeigt die Entwicklung der Beschäftigungsquote (in %) nach drei Altersgruppen – **junge Menschen**, **Menschen mittleren Alters** und **ältere Menschen** – in den Ländern Deutschland, Frankreich, Italien und Polen im Zeitraum von 2008 bis 2022.
+
+-   **Farben:**
+
+    -   **Gelb** repräsentiert Deutschland,
+
+    -   **Blau** Frankreich,
+
+    -   **Rot** Polen,
+
+    -   **Grün** Italien.
+
+#### **Erkennbares Muster:**
+
+1.  **Junge Menschen:**
+
+    -   Die Beschäftigungsquote der jungen Altersgruppe ist in allen Ländern die niedrigste.
+
+    -   Besonders in Italien und Polen bleibt die Quote sehr gering, was auf Jugendarbeitslosigkeit oder lange Ausbildungszeiten hinweisen könnte. Deutschland zeigt hier vergleichsweise höhere Werte.
+
+2.  **Menschen mittleren Alters:**
+
+    -   Die mittlere Altersgruppe weist in allen Ländern die höchste Beschäftigungsquote auf, was typisch ist, da dies die Hauptphase des Erwerbslebens darstellt.
+
+    -   Deutschland führt hier durchweg mit den höchsten Werten, während Italien und Polen niedrigere Beschäftigungsquoten in dieser Gruppe aufweisen.
+
+3.  **Ältere Menschen:**
+
+    -   Die Beschäftigungsquote älterer Menschen zeigt einen **deutlichen Anstieg** im gesamten Zeitraum, insbesondere in Deutschland.
+
+    -   In Deutschland lag die Beschäftigungsquote älterer Menschen 2008 bei etwa 50–55 % und ist bis 2022 auf über 70 % gestiegen.
+
+    -   Im Vergleich dazu haben Frankreich, Italien und Polen niedrigere Werte, wobei Polen ebenfalls einen Anstieg verzeichnet. Italien bleibt mit einer Beschäftigungsquote unter 40–50 % in dieser Gruppe weit zurück.
+
+#### **Vergleich der Länder:**
+
+Deutschland zeigt in allen Altersgruppen über die Jahre eine konstant höhere Beschäftigungsquote im Vergleich zu den anderen Ländern. Besonders auffällig ist die positive Entwicklung der Erwerbstätigkeit bei älteren Menschen in Deutschland im Vergleich zu den stagnierenden oder geringeren Werten in Frankreich, Italien und Polen.
+
+#### **Schlüsse aus der Grafik:**
+
+-   Der Anstieg der Beschäftigungsquote älterer Menschen deutet auf eine längere Verweildauer im Erwerbsleben hin, möglicherweise aufgrund von Arbeitsmarkt- und Rentenreformen.
+
+-   Deutschland sticht mit höheren Beschäftigungsquoten in allen Altersgruppen hervor, während Italien in allen Kategorien besonders schwach abschneidet.
+
+### **Entwicklung der Beschäftigungsquote älterer Menschen in Deutschland (2008–2022):**
+
+-   Der Plot zeigt deutlich, dass die Beschäftigungsquote älterer Menschen (Altersgruppe „Alt“) in Deutschland im Zeitraum 2008 bis 2022 gestiegen ist.
+
+-   Im Jahr 2008 lag die Quote bei älteren Menschen in Deutschland bei etwa 50–55 %, während sie 2022 auf über 70 % gestiegen ist.
+
+-   Dieser Anstieg zeigt, dass immer mehr ältere Menschen auch im höheren Alter wirtschaftlich aktiv sind.
+
+1.  **Vergleich mit anderen Ländern:**
+
+    -   **Deutschland** weist über den gesamten Zeitraum die höchste Beschäftigungsquote bei älteren Menschen im Vergleich zu Frankreich, Italien und Polen auf.
+
+    -   In **Frankreich** liegt die Beschäftigungsquote älterer Menschen konstant niedriger (zwischen 40 % und 55 %), während sie in **Italien** sogar noch niedriger bleibt (meist unter 40 % bis 50 %).
+
+    -   **Polen** zeigt ebenfalls einen Anstieg, jedoch ist die Quote älterer Menschen 2022 weiterhin unter der von Deutschland, bei etwa 60 %.
+
+2.  **Unterschiede zwischen Altersgruppen:**
+
+    -   In allen Ländern bleibt die Beschäftigungsquote älterer Menschen niedriger als die der mittleren Altersgruppe (Mittelalter).
+
+    -   Besonders in Deutschland sind jedoch die Unterschiede zwischen der mittleren und der älteren Altersgruppe kleiner geworden, was auf eine verbesserte Integration älterer Arbeitnehmer\*innen hinweist.
+
+    -   Die jüngere Generation hat in allen Ländern die niedrigste Beschäftigungsquote. Hier ist der Unterschied besonders deutlich in Ländern wie Italien und Polen, wo jugendliche Beschäftigung generell niedrig ist.
+
+3.  **Fazit:**
+
+    -   In Deutschland hat sich die Erwerbssituation älterer Menschen zwischen 2008 und 2022 erheblich verbessert, was auf positive arbeitsmarktpolitische Maßnahmen oder strukturelle Veränderungen hinweist (z. B. Rentenreformen oder steigende Lebensarbeitszeit).
+
+    -   Der Vergleich mit Frankreich, Italien und Polen zeigt, dass Deutschland hier führend ist, insbesondere im Vergleich zu Italien, wo ältere Menschen deutlich weniger häufig am Arbeitsmarkt teilnehmen.
+
+**Zusammengefasst:** Ja, heute arbeiten mehr ältere Menschen in Deutschland als früher, und dieser Anstieg ist im internationalen Vergleich herausragend.
+
+Plot 5
+
+```{r}
+current_well_being_german %>%
+  filter(!(Geschlecht %in% "Gesamt")) %>%
+  ggplot() +
+  aes(x = Zeitraum, y = Beschäftigungsquote, colour = Geschlecht) +
+  geom_line(size = 1.2) +  # Enhanced line thickness for better visibility
+  scale_color_hue(
+    direction = 1,
+    name = "Geschlecht"  # Adding a legend title
+  ) +
+  labs(
+    x = "Jahr",  # x-axis label
+    y = "Beschäftigungsquote (%)",  # y-axis label
+    title = "Beschäftigungsquote nach Geschlecht",  # Main title
+    subtitle = "Entwicklung der Beschäftigungsquote von 2008 bis 2022",  # Subtitle for context
+    caption = "Quelle: OECD Data Explore (Current Well-Being)"  # Data source attribution
+  ) +
+  theme_minimal(base_size = 14) +  # Clean, minimalistic theme with a larger base font
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),  # Centered, bold title
+    plot.subtitle = element_text(size = 14, hjust = 0.5),  # Centered subtitle
+    plot.caption = element_text(size = 10, hjust = 0, color = "gray50"),  # Left-aligned caption
+    axis.title.x = element_text(size = 14, face = "bold"),  # x-axis title styling
+    axis.title.y = element_text(size = 14, face = "bold"),  # y-axis title styling
+    axis.text = element_text(size = 12),  # Axis text styling
+    legend.title = element_text(size = 13),  # Legend title size
+    legend.text = element_text(size = 11),  # Legend text size
+    legend.position = "right",  # Legend positioning
+    strip.text = element_text(size = 14, face = "bold"),  # Facet label styling
+    panel.grid.major = element_line(color = "gray80"),  # Major grid lines
+    panel.grid.minor = element_line(color = "gray90")  # Minor grid lines
+  ) +
+  facet_wrap(vars(Referenzgebiet))
+```
+
+**Analyse von Plot 5: Geschlechterunterschiede in der Beschäftigungsquote (2008–2022)**
+
+### 1. **Beobachtungen:**
+
+-   **Deutschland:**\
+    Männer haben eine durchgehend hohe Beschäftigungsquote von etwa 80 %. Frauen steigern ihre Quote kontinuierlich und erreichen bis 2022 fast 75 %. Der Unterschied zwischen den Geschlechtern ist mit 5–7 % relativ gering.
+
+-   **Frankreich:**\
+    Der Unterschied zwischen Männern und Frauen ist moderat. Die Beschäftigungsquote der Männer bleibt konstant bei etwa 75 %, während Frauen ihre Quote schrittweise erhöhen und 2022 bei etwa 70 % liegen.
+
+-   **Italien:**\
+    Hier zeigt sich der größte Unterschied. Männer weisen eine Beschäftigungsquote von rund 80 % auf, während Frauen bis 2022 nur knapp 60 % erreichen.
+
+-   **Polen:**\
+    Der Unterschied ist mittelgroß. Frauen verzeichnen eine deutliche Steigerung ihrer Beschäftigungsquote und erreichen bis 2022 fast 70 %. Männer bleiben mit etwa 80 % konstant auf einem höheren Niveau.
+
+------------------------------------------------------------------------
+
+### 2. **Ergebnisse zur Fragestellung:**
+
+-   **Geringster Unterschied:**\
+    Deutschland hat den geringsten Unterschied in der Beschäftigungsquote zwischen Männern und Frauen. 2022 beträgt der Abstand nur etwa 5 %, da sich die Quoten der Geschlechter zunehmend annähern.
+
+-   **Entwicklung:**\
+    In Deutschland hat sich der Unterschied von 2008 bis 2022 leicht verringert. Dies deutet auf eine stärkere Integration von Frauen in den Arbeitsmarkt hin.
+
+------------------------------------------------------------------------
+
+### 3. **Bedeutung im Kontext der Fragestellung:**
+
+Die Daten zeigen, dass Deutschland im Vergleich zu Frankreich, Italien und Polen der Geschlechtergleichstellung auf dem Arbeitsmarkt am nächsten kommt. Besonders hervorzuheben ist die kontinuierliche Annäherung der Beschäftigungsquoten von Männern und Frauen. Italien bleibt das Land mit dem größten Unterschied, was auf anhaltende geschlechtsspezifische Hürden hinweisen könnte.
+
+## Aufgabe 4
+
+a)  
+
+**Relevanz der Ergebnisse:**\
+Die Ergebnisse meiner Analyse sind insbesondere für die deutsche und europäische Forschung, Politik sowie Arbeitsmarktbeobachter von Bedeutung. Sie liefern Einblicke in die Beschäftigungstrends und Langzeitarbeitslosigkeit, die zur Gestaltung arbeitsmarktpolitischer Maßnahmen beitragen können. Besonders die steigende Erwerbsbeteiligung älterer Menschen und die Entwicklung der Langzeitarbeitslosenquote könnten als Grundlage für sozialpolitische Entscheidungen genutzt werden.
+
+b)  
+
+**Limitierungen der Ergebnisse:**\
+Die Aussagekraft der Analyse wird durch **fehlende Daten** eingeschränkt. Einige wichtige Forschungsfragen konnten aufgrund unvollständiger oder nicht verfügbarer Daten nicht gestellt werden. Beispielsweise fehlen für die Jahre 2023 und 2024 aktuelle Zahlen, und in manchen Ländern ist die Datenlage über den gesamten Zeitraum unzureichend. Zudem könnten Verzerrungen durch methodische Unterschiede bei der Datenerhebung zwischen den Ländern entstanden sein.
+
+c)  
+
+**Probleme und Schwierigkeiten:**\
+Die größte Herausforderung war der Umgang mit **fehlenden Daten** und deren Einfluss auf die Formulierung geeigneter Fragestellungen. Es war schwierig, Forschungsfragen zu entwickeln, die mit den vorhandenen Daten vollständig beantwortet werden konnten. Ebenso war es eine Herausforderung, Trends trotz lückenhafter Datenlage präzise zu interpretieren.
+
+d)  
+
+**Zukünftige Forschungsfragen:**\
+Aus den Ergebnissen ergeben sich spannende neue Forschungsfragen, wie z. B.:
+
+-   Welche Rolle spielen körperliche und psychische Gesundheit bei der Erwerbsquote älterer Menschen?
+
+-   Inwiefern kann soziale Unterstützung wie Rentenpolitik oder betriebliche Gesundheitsförderung die Arbeitsmarktintegration verbessern?\
+    Zukünftige Analysen sollten sich auf eine umfassendere Datensammlung konzentrieren und methodische Standards zwischen den Ländern harmonisieren, um vergleichbare Ergebnisse zu erzielen.

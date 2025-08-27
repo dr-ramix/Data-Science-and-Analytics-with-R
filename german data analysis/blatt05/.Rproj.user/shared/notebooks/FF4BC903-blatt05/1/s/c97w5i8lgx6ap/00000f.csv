@@ -1,0 +1,7 @@
+"0",""
+"0","# Funktion zur Berechnung des Bruttoinlandsprodukts pro Kopf"
+"0","gdp_percap <- function(population, gdp) {"
+"0","  gdp_per_cap = gdp / population  # BIP pro Kopf berechnen"
+"0","  return(gdp_per_cap)  # Rückgabe des BIP pro Kopf"
+"0","}"
+"0",""

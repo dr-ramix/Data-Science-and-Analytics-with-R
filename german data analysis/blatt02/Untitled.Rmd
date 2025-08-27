@@ -1,0 +1,297 @@
+---
+title: 'Übungsblatt #2'
+author: "Seyed Ramtin Hosseini"
+date: "2024-11-24"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Übungsblatt 02
+
+### Seyed Ramtin Hosseini
+
+
+
+Studiengang: Informatik
+
+#### Aufgabe 1
+
+Für die erste Aufgabe habe ich ein Rmarkdown Dokument in Rstudio (mit HTML als output format) erstellt und die benötigte Metadaten eingegeben.
+
+#### Aufgabe 2
+
+a ) Der Datensatz wurde heruntergeladen und wurde in den Ordner "data" hinzugefügt
+
+b)  
+
+Installation und Verwendung des Pakets "tidyverse"
+
+``` r
+install.packages('tidyverse')
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Den Datensatz laden
+
+```{r message=FALSE, warning=FALSE}
+
+oktoberfestDatensatz <- read_csv("data/oktoberfestgesamt19852023.csv")
+```
+
+c)  
+
+Verwendung der Funktion head(), um die erste 10 Zeilen des Datensatez auszugeben
+
+```{r message=FALSE, warning=FALSE}
+
+head(oktoberfestDatensatz, n=10)
+```
+
+d)  
+
+<!-- -->
+
+1.  *jahr*: numerisch (min: 1985, max: 2023)
+
+2.  *besucher_gesamt*: numerisch (min: 5.5, max: 7.2)
+
+3.  *bier_preis: numerisch:* (min: 3.2, max: 14.33)
+
+4.  *bier_konsum*: numerisch (min: 48698 , max: 79225)
+
+    ##### Code für diese Aufgabe:
+
+```{r message=FALSE, warning=FALSE}
+
+#Year 
+yearColumn <- oktoberfestDatensatz$jahr
+
+typeOfYearColumn <- typeof(yearColumn)
+classOfYearColumn <- class(yearColumn)
+if (is.numeric(yearColumn)) {
+  #Minimum Value
+  min_value <- min(yearColumn, na.rm = TRUE)  # Use na.rm = TRUE to ignore missing values (NA)
+  # Maximum value
+  max_value <- max(yearColumn, na.rm = TRUE)
+  
+  cat("Jahr:",typeOfYearColumn,"(min:",min_value,", max:", max_value, ")")
+} else {
+  cat("Jahr:",typeOfYearColumn,"(min:",min_value,", max:", max_value, ")")
+}
+
+#Total Visitor 
+visitorTotalColumn <- oktoberfestDatensatz$besucher_gesamt
+
+typeOfVisitorTotalColumn <- typeof(visitorTotalColumn)
+classOfVisitorTotalColumn <- class(visitorTotalColumn)
+if (is.numeric(visitorTotalColumn)) {
+  #Minimum Value
+  min_value <- min(visitorTotalColumn, na.rm = TRUE)  # Use na.rm = TRUE to ignore missing values (NA)
+  # Maximum value
+  max_value <- max(visitorTotalColumn, na.rm = TRUE)
+  
+  cat("Gesamt Besucher:",typeOfVisitorTotalColumn,"(min:",min_value,", max:", max_value, ")")
+} else {
+  cat("Gesamtbesucher:",typeOfVisitorTotalColumn,"(min:",min_value,", max:", max_value, ")")
+}
+
+
+#Price of Beer
+priceBeerColumn <- oktoberfestDatensatz$bier_preis
+
+typeOfPriceBeerColumn <- typeof(priceBeerColumn)
+classOfPriceBeerColumn <- class(priceBeerColumn)
+if (is.numeric(priceBeerColumn)) {
+  #Minimum Value
+  min_value <- min(priceBeerColumn, na.rm = TRUE)  # Use na.rm = TRUE to ignore missing values (NA)
+  # Maximum value
+  max_value <- max(priceBeerColumn, na.rm = TRUE)
+  
+  cat("Bierpreis:",typeOfYearColumn,"(min:",min_value,", max:", max_value, ")")
+} else {
+  cat("Bierpreis:",typeOfYearColumn,"(min:",min_value,", max:", max_value, ")")
+}
+
+
+#Beer Consume
+bierConsumeColumn <- oktoberfestDatensatz$bier_konsum
+
+typeOfBierConsumeColumn <- typeof(bierConsumeColumn)
+classOfBierConsumeColumn <- class(bierConsumeColumn)
+if (is.numeric(bierConsumeColumn)) {
+  #Minimum Value
+  min_value <- min(bierConsumeColumn, na.rm = TRUE)  # Use na.rm = TRUE to ignore missing values (NA)
+  # Maximum value
+  max_value <- max(bierConsumeColumn, na.rm = TRUE)
+  
+  cat("Bierkonsum:",typeOfBierConsumeColumn,"(min:",min_value,", max:", max_value, ")")
+} else {
+  cat("Bierkonsum:",typeOfBierConsumeColumn,"(min:",min_value,", max:", max_value, ")")
+}
+
+```
+
+### Aufgabe 3
+
+a )
+
+ggpolt hinzufügen
+
+```{r}
+library(ggplot2)
+```
+
+Erstellung Bar-Plot mit ggplot in dem die unterschiedlichen Dauern des Oktoberfests über die Jahre hinweg.
+
+```{r}
+
+#Dauer über die Jahre 
+ggplot(oktoberfestDatensatz) +
+  aes(x = jahr, y = dauer) +
+  geom_bar(stat = "identity", fill = "black", colour = "black", width = 0.8) +
+  labs(
+    x = "Jahre", 
+    y = "Dauer (in Tagen)", 
+    title = "Dauer des Oktoberfests über die Jahre", 
+    subtitle = "Oktoberfest 1985 - 2023", 
+    caption = "Open Data Portal Munich (https://opendata.muenchen.de/id/dataset/oktoberfest/resource/e0f664cf-6dd9-4743-bd2b-81a8b18bd1d2)"
+  ) +
+  theme_gray() +
+  theme(
+    plot.title = element_text(size = 20L, face = "bold"), 
+    plot.subtitle = element_text(size = 12L), 
+    axis.title.y = element_text(size = 13L), 
+    axis.title.x = element_text(size = 13L)
+  )
+```
+
+**Beschreibung**: Die Grafik zeigt die Dauer des Oktoberfests (in Tagen) in verschiedenen Jahren von 1985 bis 2023. Zum Darstellung der Daten wurde hier einen Bar-Plot genutzt.
+
+#### Was ist die häufigste Dauer des Oktoberfests?
+
+**Antwort: 16 ,** Anhand der Grafik, kann man dies erkennen.
+
+b)  
+
+Erstellung einen Scatter-Plot mit dem Jahr auf der x-Achse und der Anzahl Besucher (in Millionen) auf der y-Achse.
+
+```{r}
+#Besucher über die Jahre
+ggplot(oktoberfestDatensatz) +
+  aes(x = jahr, y = besucher_gesamt) +
+  geom_point(size = 5L, shape = "bullet", colour = "#228B22") +
+  labs(x = "Jahr", y = "Anzahl der Besucher (in Mio)", title = "Anzahl der Besucher des Oktoberfestes (in Mio)", subtitle = "Oktoberfest (1985-2023)", 
+       caption = "Open Data Portal Munich (https://opendata.muenchen.de/id/dataset/oktoberfest/resource/e0f664cf-6dd9-4743-bd2b-81a8b18bd1d2)") +
+  theme_light() +
+  theme(legend.justification = "top", plot.title = element_text(size = 18L, face = "bold"), 
+        plot.subtitle = element_text(size = 14L), axis.title.y = element_text(size = 14L), axis.title.x = element_text(size = 14L), 
+        legend.text = element_text(size = 12L), legend.title = element_text(size = 12L))
+
+```
+
+**Beschreibung**: Die Grafik zeigt die Anzahl der Besucher des Oktoberfests (in Millionen) in verschiedenen Jahren von 1985 bis 2023. Zum Darstellung der Daten wurde hier einen Scatter-Plot genutzt.
+
+#### Aufgabe 4
+
+a)  
+
+Erstellung einen Line-Plot in dem der Bier-Preis auf dem Oktoberfest über die Jahre hinweg angezeigt wird.
+
+```{r}
+
+#Bier-Preise über die Jahren
+ggplot(oktoberfestDatensatz) +
+  aes(x = jahr, y = bier_preis) +
+  geom_line(colour = "#112446") +
+  labs(x = "Jahr ", y = "Bier-Preis", 
+       title = "Bier-Preise auf den Oktoberfest über die Jahren", subtitle = "Oktoberfest (1985-2023)", 
+       caption = "Open Data Portal Munich (https://opendata.muenchen.de/id/dataset/oktoberfest/resource/e0f664cf-6dd9-4743-bd2b-81a8b18bd1d2)") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 18L, face = "bold"), plot.subtitle = element_text(size = 14L))
+
+```
+
+**Beschreibung**: Die Grafik zeigt die Bier Preise des Oktoberfests (in EUR) in verschiedenen Jahren von 1985 bis 2023. Zum Darstellung der Daten wurde hier einen Line-Plot genutzt. Man kann anhand der Grafik erkennen, dass die Preise immer steigen. Dies bedeutet, dass man erwarten soll, dass die Preise für jedes Jahr ein bischen mehr all vorheriges Jahr sind.
+
+b)  
+
+Erstellung einen Line-Plot in dem der Bier-Konsum auf dem Oktoberfest über die Jahre hinweg angezeigt wird.
+
+```{r}
+#Bier-Konsum über die Jahren
+ggplot(oktoberfestDatensatz) +
+  aes(x = jahr, y = bier_konsum) +
+  geom_line(colour = "#112446") +
+  labs(x = "Jahr ", y = "Bier-Konsum (in Hektoliter)", 
+       title = "Bier-Konsum auf den Oktoberfest über die Jahren", subtitle = "Oktoberfest (1985-2023)", 
+       caption = "Open Data Portal Munich (https://opendata.muenchen.de/id/dataset/oktoberfest/resource/e0f664cf-6dd9-4743-bd2b-81a8b18bd1d2)") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 18L, face = "bold"), plot.subtitle = element_text(size = 14L))
+```
+
+**Beschreibung**: Die Grafik zeigt der Bier-Konsum im Oktoberfest (in Hektoliter) in verschiedenen Jahren von 1985 bis 2023. Zum Darstellung der Daten wurde hier einen Line-Plot genutzt. Man kann anhand der Grafik erkennen, dass der Bier-Konsum relativ viel mehr als früher ist. Außedem, es ist zu erkennen, dass in den Jahren 2001 und 2002 Bier-Konsum niedriger als alle anderen Jahren zwischen 1985 und 2023 war.
+
+c)  
+
+Rekonstrution den gegebenen Plot
+
+```{r}
+#Bier-Konsum und -Preis auf dem Oktoberfest.
+ggplot(oktoberfestDatensatz) +
+  aes(x = bier_preis, y = bier_konsum, size = besucher_tag) +
+  geom_point(shape = "circle small", 
+             colour = "#000000") +
+  labs(x = "Bier-Konum (in Hektolitern)", y = "Bier-Preis (in EUR)", size = "Besucher / Tag (in Tsd.)" ,title = "Bier-Konsum und -Preis auf dem Oktoberfest", 
+       subtitle = "Zwischen 1985 und 2023", caption = "Quelle: Open Data Platform der Stadt München") +
+  theme_gray() +
+  theme(plot.title = element_text(size = 18L, face = "bold"), plot.subtitle = element_text(size = 16L), 
+        plot.caption = element_text(size = 13L, hjust = 0.5), axis.title.y = element_text(size = 16L), axis.title.x = element_text(size = 16L))
+```
+
+d)  
+
+**Beschreibung**:
+
+Der Scatter-Plot beschreibt den Bierpreis (von 1 Euro bis 15 Euro) sowie den Bierkonsum auf dem Oktoberfest von 1985 bis 2023. Die Größe der Kreisen bescheibt die Anzahl der Besucher im Tag (in 1000). Man kann sehen, dass die Bier-Preise und Bier-Konsum eine relativ lineare Beziehung haben.
+
+**Glaubt ihr der Bier-Preis und die Menge die an Bier getrunken wird hängen miteinander zusammen? Warum / Warum nicht?**
+
+**Ja**, Wir können im Plot eine klare Linie erkennen. Dies deutet darauf hin, das der Bier-Preis und -Konsum zusammenhängt.
+
+**Nein**, es ist klar dass wir eine lineare Beziehung zwischen den Bier-Preis und Bier Konsum sehen können. Jedoch es deutet nicht hauptsächlich darauf, dass die beide zusammenhängen. Ein Argument ist, dass beide in den letzten Jahren zugenommen haben, also sind beide vielleicht nicht miteinander verbunden und beide sind nur aufgrund eines anderen Arguments gestiegen, hauptsächlich aufgrund der Zeit.
+
+e)  
+
+"Insgesamt wurden von 1985 - 2023 20,727,002 Hendl gegessen."
+
+Code:
+
+```{r}
+hendl_gesamt <- sum(oktoberfestDatensatz$hendl_konsum) 
+print(paste("Insgesamt wurden von 1985 - 2023 ", format(hendl_gesamt, big.mark = ","), "Hendl gegessen."))
+```
+
+#### Aufgabe 5
+
+```{r message=FALSE, warning=FALSE}
+aktivBeschaeftigte <- read_csv("data/lhm-personal-aktiv-beschaeftigte.csv")
+head(aktivBeschaeftigte)
+
+ggplot(aktivBeschaeftigte) +
+ aes(x = jahr, y = insgesamt) +
+ geom_line(linewidth = 1L, colour = "#228B22") +
+ labs(x = "Jahr", y = "Gesamtanzahl", title = "Aktiv Beschäftigte der Landeshauptstadt München", 
+subtitle = "Zwischen 2017 bis 2023", caption = "Quelle https://opendata.muenchen.de/id/dataset/aktiv-beschaftigte-der-landeshauptstadt-muenchen/resource/c49554db-becb-4bff-a16e-694bcda23376") +
+ theme(plot.title = element_text(size = 16L, face = "bold"), plot.subtitle = element_text(size = 13L), 
+ plot.caption = element_text(size = 8L))
+```
+
+Beschreibung:
+
+Der Grafik zeigt die Anzahl der Akitvbeschäftigte (**Aktiv Beschäftigte** = Beschäftigte (Beamte\*innen und Tarifbeschäftigte) mit regelmäßigen Zahlungen.) der Landeshauptstadt München in verschieden Jahren zwischen 2017 und 2023.
+
+Auf der X-Achse sieht man die Jahren und auf der Y-Achse die Gesamtanzahl. Ich hab Line-Plot genutzt, damit man besser die Änderung der Gesamtanzahl der Aktivbescgäftigte der Landeshauptstadt München in verschieden Jahren sehen kann.

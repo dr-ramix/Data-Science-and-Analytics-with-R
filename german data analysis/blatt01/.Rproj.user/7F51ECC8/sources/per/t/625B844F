@@ -1,0 +1,28 @@
+{
+    "id": "625B844F",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1731258940009.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "id": "b4c9f89aa5a74e358704d9426c8ddeaa",
+        "name": "allbus$land",
+        "title": "allbus$land",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 0,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1731258940009,
+    "read_only": false,
+    "read_only_alternatives": []
+}

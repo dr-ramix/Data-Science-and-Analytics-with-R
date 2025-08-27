@@ -1,0 +1,8 @@
+"0","variable_summary <- function(columnName) {"
+"0","  # Check if the column is numeric"
+"0","  if (is.numeric(columnName)) {"
+"0","    summary(columnName)  # Summary for numeric columns"
+"0","  } else {"
+"0","    table(columnName)  # Frequency table for non-numeric columns (e.g., factors)"
+"0","  }"
+"0","}"

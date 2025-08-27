@@ -1,0 +1,19 @@
+"0","# Data Wrangling"
+"0","weather_long <- weather %>% pivot_longer("
+"0","  cols = c(temperature_2m_max_c, temperature_2m_min_c, temperature_2m_mean_c),"
+"0","  names_to = ""type"","
+"0","  values_to = ""temperature"") %>% mutate("
+"0","    type = case_when("
+"0","    type == ""temperature_2m_max_c""  ~ ""Max."","
+"0","    type == ""temperature_2m_min_c""  ~ ""Min."","
+"0","    type == ""temperature_2m_mean_c"" ~ ""Durchschnitt"","
+"0","    TRUE ~ type"
+"0","    )"
+"0","  )"
+"1","[1m[33mError[39m in `pivot_longer()`:[22m
+[33m![39m Can't select columns that don't exist.
+[31m✖[39m Column `temperature_2m_max_c` doesn't exist.
+Backtrace:
+[90m 1. [39m... %>% ...
+[90m 4. [39m[1m[94mtidyr:::pivot_longer.data.frame([39m[22m...[1m[94m)[39m[22m
+"

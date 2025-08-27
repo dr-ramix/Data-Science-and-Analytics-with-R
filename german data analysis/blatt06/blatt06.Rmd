@@ -1,0 +1,327 @@
+---
+title: "Blatt06"
+author: "Seyed Ramtin Hosseini"
+date: "2025-02-05"
+output: html_document
+---
+
+## Aufgabe 1
+
+### Vorbereitung
+
+### Installation und Laden der benötigten Pakete
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(glue) # Für schönere Ausgabeformatierung
+```
+
+Laden der Daten
+
+```{r message=FALSE, warning=FALSE}
+videos <- read_csv("data/yt-videos.csv")
+```
+
+### a)
+
+Wieviele Videos wurden im Channel insgesamt hochgeladen?
+
+```{r message=FALSE, warning=FALSE}
+amount_of_uploaded_videos <- nrow(videos)
+glue("Anzahl der hochgeladenen Videos im Channel: {amount_of_uploaded_videos}")
+```
+
+Was ist das meistgeschaute Video?
+
+```{r message=FALSE, warning=FALSE}
+most_viewed_video <- videos %>% slice_max(views, n = 1)
+glue("Das meistgeschaute Video: {most_viewed_video$video_title} mit {most_viewed_video$views} Views.")
+```
+
+Was ist das insgesamt am längsten geschaute Video?
+
+```{r message=FALSE, warning=FALSE}
+most_watched_video <- videos %>% slice_max(watch_time_hours, n = 1)
+most_watched_video_time_hours <- round(most_watched_video$watch_time_hours)
+glue("Das am längsten geschaute Video: {most_watched_video$video_title} mit {most_watched_video_time_hours} Stunden Watch-Time.")
+```
+
+Wieviele Stunden wurden insgesamt Videos geschaut?
+
+```{r message=FALSE, warning=FALSE}
+total_hours_watched_video <- sum(videos$watch_time_hours, na.rm = TRUE)
+glue("Insgesamt wurden {round(total_hours_watched_video)} Stunden Videos geschaut.")
+```
+
+### b)
+
+Erstellung einer Funktion zur Analyse Wir erstellen eine Funktion give_answers(), die alle Fragen für einen beliebigen Datensatz beantwortet.
+
+```{r message=FALSE, warning=FALSE}
+give_answers <- function(dataset) {
+  
+  # Anzahl hochgeladener Videos
+  amount_of_uploaded_videos <- nrow(dataset)
+  
+  # Meistgesehenes Video
+  most_viewed_video <- dataset %>% slice_max(views, n = 1)
+  
+  # Am längsten geschaute Video
+  most_watched_video <- dataset %>% slice_max(watch_time_hours, n = 1)
+  
+  # Gesamt-Watch-Time
+  total_hours_watched_video <- sum(dataset$watch_time_hours, na.rm = TRUE)
+  
+  # Ausgabe
+  glue("
+  📊 Analyse der YouTube-Daten:
+  ------------------------------------
+  🏆 Anzahl der hochgeladenen Videos: {amount_of_uploaded_videos}
+  🎥 Meistgesehenes Video: {most_viewed_video$video_title} mit {most_viewed_video$views} Views
+  ⏳ Am längsten geschaute Video: {most_watched_video$video_title} mit {most_watched_video$watch_time_hours} Stunden Watch-Time
+  ⏱️ Gesamt-Watch-Time aller Videos: {round(total_hours_watched_video)} Stunden
+  ")
+}
+
+# Anwendung der Funktion
+give_answers(videos)
+
+```
+
+## Aufgabe 2
+
+In dieser Aufgabe nutzen wir **Joins**, um den YouTube-Datensatz nach Videos des Kurses **StatProg1** zu filtern und analysieren die verbleibenden Videos.
+
+### Laden der zusätzlichen Daten
+
+Wir laden nun den Datensatz `yt-statprog1-ids.csv`, der die IDs der Videos enthält, die zu **StatProg1** gehören.
+
+```{r}
+statprog1_ids <- read_csv("data/yt-statprog1-ids.csv")
+```
+
+### a)
+
+Wir nutzen einen inner_join(), um nur die Videos aus dem videos-Datensatz zu behalten, die zu StatProg1 gehören. Das Ergebnis speichern wir in statprog1_videos.
+
+```{r}
+statprog1_videos <- inner_join(videos, statprog1_ids, by = "content")
+
+glue("Anzahl der Videos, die zu StatProg1 gehören: {nrow(statprog1_videos)}")
+```
+
+### b)
+
+Wir wenden nun die Funktion give_answers() aus Aufgabe 1 auf statprog1_videos an
+
+```{r}
+give_answers(statprog1_videos)
+```
+
+### c)
+
+Nun nutzen wir anti_join(), um alle Videos zu erhalten, die nicht zu StatProg1 gehören.
+
+```{r}
+other_videos <- anti_join(videos, statprog1_ids, by = "content")
+
+glue("Anzahl der Videos, die NICHT zu StatProg1 gehören: {nrow(other_videos)}")
+```
+
+### Aufabe 3
+
+In dieser Aufgabe analysieren wir die Entwicklung der Video-Views über die Zeit.
+
+#### Laden der Daten
+
+```{r}
+daily_views <- read_csv("data/yt-daily-views.csv")
+```
+
+### a)
+
+Entwicklung der Views für das meistgesehene Video Wir filtern die Daten für das meistgesehene Video, das wir in Aufgabe 1 ermittelt haben.
+
+```{r}
+daily_views_of_most_viewed <- daily_views %>%
+  filter(content == most_viewed_video$content)
+```
+
+#### Visualisierung der Views über die Zeit
+
+```{r}
+library(ggplot2)
+
+# Maximaler View-Wert & Datum ermitteln
+max_point <- daily_views_of_most_viewed %>%
+  filter(views == max(views))
+
+# Professionelle Visualisierung
+ggplot(daily_views_of_most_viewed, aes(x = date, y = views)) +
+  
+  # Basis-Linie für tägliche Views
+  geom_line(color = "#112446", size = 1.2, alpha = 0.9) +
+  
+  # Maximalen Punkt hervorheben
+  geom_point(data = max_point, aes(x = date, y = views), 
+             color = "red", size = 2, shape = 21, fill = "yellow", stroke = 1.5) +
+  
+  # Vertikale Linie für das Datum mit max. Views
+  geom_vline(xintercept = as.numeric(max_point$date), 
+             linetype = "dashed", color = "gray40", size = 0.8) +
+  
+  # Horizontale Linie für die maximale Anzahl der Views
+  geom_hline(yintercept = max_point$views, 
+             linetype = "dotted", color = "gray40", size = 0.8) +
+  
+  # Annotation für den höchsten Punkt
+  annotate("text", x = max_point$date, y = max_point$views + 10, 
+           label = paste("Max Views:", max_point$views), 
+           color = "red", fontface = "bold", vjust = -0.5, size = 3.5) +
+  
+  # Achsenbeschriftungen & Titel
+  labs(
+    title = "📈 Entwicklung der Views für das meistgesehene Video",
+    subtitle = "Oktober 2024 – Januar 2025",
+    x = "Datum",
+    y = "Anzahl der Views",
+    caption = "Datenquelle: Vorlesung Statistische Software"
+  ) +
+  
+  # Anpassungen im Theme
+  theme_minimal(base_family = "Helvetica") +
+  theme(
+    plot.title = element_text(size = 15, face = "bold", color = "#112446"),
+    plot.subtitle = element_text(size = 12, face = "italic", color = "#444444"),
+    axis.title = element_text(size = 10, face = "bold"),
+    axis.text = element_text(size = 8, color = "#333333"),
+    plot.caption = element_text(size = 7, color = "gray50", hjust = 1),
+    panel.grid.major = element_line(color = "#E0E0E0"),
+    panel.grid.minor = element_blank(),
+    plot.background = element_rect(fill = "#F9F9F9", color = NA),
+    panel.border = element_blank()
+  ) +
+  
+  # Formatierung der Datumsachse
+  scale_x_date(date_labels = "%b %Y", date_breaks = "1 month") 
+```
+
+### b)
+
+Berechnung der Gesamt-Views pro Tag Wir aggregieren die Gesamt-Views über alle Videos für jeden Tag und speichern sie in daily_views_all.
+
+```{r}
+daily_views_all <- daily_views %>%
+  group_by(date) %>%
+  summarise(views = sum(views, na.rm = TRUE))  # NA-Werte vermeiden
+
+glue("Die Anzahl der Tage mit vorhandenen Daten: {nrow(daily_views_all)}")
+```
+
+```{r}
+
+```
+
+## Aufgabe 4
+
+```{r}
+weather <- read_delim("data/weatherdata-2024.csv", delim = ",")
+```
+
+### a)
+
+```{r}
+problems(weather)
+```
+
+```{r}
+weather <- read_delim("data/weatherdata-2024.csv", delim = ",", skip = 2)
+
+#install.packages("janitor")
+library(janitor)
+```
+
+```{r}
+weather <- weather %>%
+  clean_names()
+```
+
+b)  
+
+```{r}
+# Data Wrangling
+weather_long <- weather %>% pivot_longer(
+  cols = c(temperature_2m_max_c, temperature_2m_min_c, temperature_2m_mean_c),
+  names_to = "type",
+  values_to = "temperature") %>% mutate(
+    type = case_when(
+    type == "temperature_2m_mean_c" ~ "Durchschnitt",
+    type == "temperature_2m_min_c"  ~ "Min.",
+    type == "temperature_2m_max_c"  ~ "Max.",
+    TRUE ~ type
+    )
+  )
+
+# Plot
+ggplot(
+  data = weather_long,
+  mapping = aes(
+    x = time,
+    y = temperature,
+    color = type
+  )
+) + 
+  geom_point(alpha = 0.7, size = 2) +  # Punkte für Temperaturen
+  scale_color_manual(values = c("#2ca02c", "#ff7f0e", "#1f77b4"),  # Blaue, orange und grüne Farbskala
+                     labels = c("Durchschnitt", "Max. Temperatur","Min. Temperatur")) +
+  labs(
+    title = "🌡 Tägliche Temperaturentwicklung",
+    subtitle = "Minimale, maximale und durchschnittliche Temperatur",
+    x = "Datum",
+    y = "Temperatur (°C)",
+    color = "Temperaturart",
+    caption = "Datenquelle: Wetterdaten"
+  ) +
+  theme_minimal(base_family = "Helvetica") +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12, face = "italic"),
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10)
+  ) 
+```
+
+### c)
+
+```{r}
+# Data Wrangling
+daily_views_all <- daily_views_all %>% rename(time = date)
+  
+views_and_weather <- inner_join(daily_views_all, weather_long, by = "time")
+
+
+# Plot
+ggplot(
+  data = views_and_weather,
+  mapping = aes(
+    x = time,
+    y = views,
+    color = precipitation_sum_mm
+  )
+) + 
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Niederschlag und Views",
+    x = "Datum",
+    y = "Views",
+    color = "Niederschlag in mm"  
+  ) +
+  theme_minimal() +
+  scale_color_gradient(low = "green", high = "red")
+```
+
+### d) 
+
+Bei stark schwankenden View-Zahlen lässt sich kein eindeutiger Zusammenhang zwischen Views und Niederschlag feststellen. Zudem kann nicht eindeutig gesagt werden, ob ein erhöhter Niederschlag zu einem Anstieg der View-Zahlen führt, da der Graph sowohl Zuwächse als auch Rückgänge zeigt.

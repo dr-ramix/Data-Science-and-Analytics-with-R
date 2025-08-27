@@ -1,0 +1,2 @@
+"0","weather <- weather %>%"
+"0","  clean_names()"
